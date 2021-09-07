@@ -26,7 +26,6 @@ Ideally any props that are defined in components should also have typescript int
 
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import DropDownList from './components/DropDownList';
 import { fetchImage, getDogs } from './helper/fetchInfo';
 import { Container } from '@material-ui/core';
@@ -47,10 +46,12 @@ function TestComponent() {
 
   
   useEffect(() => {
+    // Reset the subbreed list whenever selected breed changes
     selectedBreed !== "" && setsubBreedList(dogInfo.data.message[selectedBreed]);
   }, [selectedBreed])
-
+  
   useEffect(() => {
+    // Fetch a new image when selected subbreed changes
     selectedSubBreed !== "" && fetchImage(selectedBreed, selectedSubBreed).then(e => setRandomImage(e))
   }, [selectedSubBreed])
 
@@ -59,6 +60,7 @@ function TestComponent() {
     setRandomImage(null)
     setSelectedSubBreed('')
   };
+
   const handleSubBreedSelection = (e) => {
     setSelectedSubBreed(e);
   };
