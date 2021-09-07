@@ -44,12 +44,12 @@ function TestComponent() {
     getDogs().then(response => setDoginfo(response))
   }, [])
 
-  
+
   useEffect(() => {
     // Reset the subbreed list whenever selected breed changes
     selectedBreed !== "" && setsubBreedList(dogInfo.data.message[selectedBreed]);
   }, [selectedBreed])
-  
+
   useEffect(() => {
     // Fetch a new image when selected subbreed changes
     selectedSubBreed !== "" && fetchImage(selectedBreed, selectedSubBreed).then(e => setRandomImage(e))
@@ -66,37 +66,35 @@ function TestComponent() {
   };
 
 
- 
+
 
   return (
     <div>
       {
         (dogInfo && dogInfo.data && dogInfo.data.message) ?
-          <>
-            <DropDownList list={Object.keys(dogInfo.data.message)}  id='Dog Breed' name='Dog Breed' onSelect={handleBreedSelection}  />
-            {
-              (selectedBreed !== "")  &&
-              (
-                (subBreedList.length > 0) ?
-                  <DropDownList list={subBreedList}  id='subBreed' name='Sub Breed' onSelect={handleSubBreedSelection} />
-                  :
-                  'The seleted Breed has no sub breed'
-              )
-            }
-          </>
+          <DropDownList list={Object.keys(dogInfo.data.message)} id='Dog Breed' name='Dog Breed' onSelect={handleBreedSelection} />
           :
           <p>waiting for data..</p>
       }
       {
+        (selectedBreed !== "") &&
+        (
+          (subBreedList.length > 0) ?
+            <DropDownList list={subBreedList} id='subBreed' name='Sub Breed' onSelect={handleSubBreedSelection} />
+            :
+            'The seleted Breed has no sub breed'
+        )
+      }
+      {
         (randomImage) &&
         <Container maxWidth="xs"  >
-          <img alt='random_image' src={randomImage}  width='100%' />
+          <img alt='random_image' src={randomImage} width='100%' />
         </Container>
       }
     </div>
   );
 
- 
+
 
 }
 export default TestComponent;
