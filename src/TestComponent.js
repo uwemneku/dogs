@@ -89,7 +89,7 @@ function TestComponent() {
       }
       {
         (randomImage) &&
-        <Container maxWidth="sm">
+        <Container maxWidth="xs"  >
           <img alt='random_image' src={randomImage}  width='100%' />
         </Container>
       }
