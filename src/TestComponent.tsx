@@ -29,58 +29,53 @@ import React, { useState, useEffect } from 'react';
 import DropDownList from './components/DropDownList';
 import { fetchImage, getDogs } from './helper/fetchInfo';
 import { Container } from '@material-ui/core';
+import { DogBreeds } from './allTypes';
+import { dropDownListCallback } from './components/DropDownList';
 
 
+const TestComponent:React.FC = () => {
+  const [dogInfo, setDoginfo] = useState<DogBreeds>({});
+  const [selectedInfo, setSelectedInfo] = useState<{breed: string, subBreed: string}>({breed: '', subBreed: ''})
+  const [randomImage, setRandomImage] = useState<string |null >(null)
+  const [subBreedList, setsubBreedList] = useState<string[]>([])
+  const breedArray = Object.keys(dogInfo)
 
-function TestComponent() {
-  const [dogInfo, setDoginfo] = useState({});
-  const [selectedBreed, setSelectedBreed] = useState("");
-  const [selectedSubBreed, setSelectedSubBreed] = useState('')
-  const [randomImage, setRandomImage] = useState(null)
-  const [subBreedList, setsubBreedList] = useState([])
-
-
-  useEffect(() => {
-    getDogs().then(response => setDoginfo(response))
+  useEffect( () => {
+    (async () => {
+      const dogs = await getDogs()
+      setDoginfo(dogs)
+    })()
   }, [])
 
 
-  useEffect(() => {
-    // Reset the subbreed list whenever selected breed changes
-    selectedBreed !== "" && setsubBreedList(dogInfo.data.message[selectedBreed]);
-  }, [selectedBreed])
+const handleSelection: dropDownListCallback = (inputName, value) => {
+    inputName === 'breed' ?
+        setSelectedInfo({breed:value, subBreed:''}) // reset subBreed when breed changes
+        :
+        setSelectedInfo({...selectedInfo, [inputName]:value })
+    
+}
 
-  useEffect(() => {
-    // Fetch a new image when selected subbreed changes
-    selectedSubBreed !== "" && fetchImage(selectedBreed, selectedSubBreed).then(e => setRandomImage(e))
-  }, [selectedSubBreed])
-
-  const handleBreedSelection = (e) => {
-    setSelectedBreed(e);
-    setRandomImage(null)
-    setSelectedSubBreed('')
-  };
-
-  const handleSubBreedSelection = (e) => {
-    setSelectedSubBreed(e);
-  };
-
+useEffect(() => {
+    selectedInfo.breed !== "" && setsubBreedList(dogInfo[selectedInfo.breed]);
+    selectedInfo.subBreed !== "" && fetchImage(selectedInfo.breed, selectedInfo.subBreed).then(e => setRandomImage(e))
+}, [selectedInfo])
 
 
 
   return (
     <div>
       {
-        (dogInfo && dogInfo.data && dogInfo.data.message) ?
-          <DropDownList list={Object.keys(dogInfo.data.message)} id='Dog Breed' name='Dog Breed' onSelect={handleBreedSelection} />
+        (breedArray.length > 0) ?
+          <DropDownList list={breedArray} id='breed' name='Dog Breed' onSelect={handleSelection} />
           :
           <p>waiting for data..</p>
       }
       {
-        (selectedBreed !== "") &&
+        (selectedInfo.breed !== "") &&
         (
           (subBreedList.length > 0) ?
-            <DropDownList list={subBreedList} id='subBreed' name='Sub Breed' onSelect={handleSubBreedSelection} />
+            <DropDownList list={subBreedList} id='subBreed' name='Sub Breed' onSelect={handleSelection} />
             :
             'The seleted Breed has no sub breed'
         )
