@@ -1,5 +1,5 @@
 
-import React, { ChangeEvent, ReactNode, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,11 +10,11 @@ import Select from '@material-ui/core/Select';
 export type dropDownListCallback = (inputName: string, value: string) => void;
 interface DropDownListProps {
     /**
-     * A string array to be displayed in the dropdown list
+     * An array of strings to be displayed in the dropdown list
      */
-    list: string[];
+    data: string[];
     /**
-     * This is used as the name for the Select HTML element
+     * This the name of the Select HTML element
      */
     id: string;
     /**
@@ -22,7 +22,7 @@ interface DropDownListProps {
      */
     name: string;
     /**
-    * This function is called when the value of the dropdown changes. The function is passed the event.
+    * This function is called when the value of the dropdown changes.
     */
     onSelect: dropDownListCallback
 }
@@ -36,13 +36,13 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(2),
     },
 }));
-const DropDownList: React.FC<DropDownListProps> = ({ list, id, name, onSelect }) => {
+const DropDownList: React.FC<DropDownListProps> = ({data, id, name, onSelect }) => {
     const classes = useStyles();
     const [selection, setSelection] = useState<unknown>("");
 
     const handleChange = (event: ChangeEvent<{ name?: string | undefined; value: unknown; }>): void => {
         setSelection(event.target.value);
-        //   @ts-ignore: Material UI returns the selected value with a type unknown
+        //   @ts-ignore: Material UI returns the selected value with a type unknown. This ignore statements lets onSelect take that value as a string
         onSelect(event.target.name, event.target.value)
     };
 
@@ -50,7 +50,7 @@ const DropDownList: React.FC<DropDownListProps> = ({ list, id, name, onSelect })
     return (
         <div>
             {
-                (list.length > 0)
+                (data.length > 0)
                 &&
                 (
                     <FormControl className={classes.formControl} >
@@ -62,7 +62,7 @@ const DropDownList: React.FC<DropDownListProps> = ({ list, id, name, onSelect })
                             value={selection}
                             onChange={handleChange}
                         >
-                            {list.map(x =>
+                            {data.map(x =>
                                 <MenuItem key={x} value={x}>{x}</MenuItem>
                             )}
 
